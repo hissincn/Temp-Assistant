@@ -98,7 +98,7 @@ export default {
     <div tabindex="0" class="collapse group mt-6 mb-10">
         <div
             class="font-semibold text-blue-500 mb-2 dark:text-white collapse-title bg-white  group-focus:bg-secondary group-focus:text-secondary-content group-focus:rounded-t-lg rounded-lg border dark:border-gray-700">
-            通知/公告 «
+            通知/公告 «点击查看
         </div>
         <div
             class="collapse-content bg-white text-primary-content group-focus:bg-white group-focus:text-secondary-content group-focus:rounded-lg group-focus:border dark:border-gray-700">
@@ -170,6 +170,12 @@ export default {
                 <p class="text-gray-700 dark:text-gray-400 mb-3"># 微信扫码关注公众号订阅每日打卡状态</p>
                 <div class="mt-1">
                     <img src="../assert/wechat.jpg" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-2">
+                </div>
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-700 dark:text-gray-400 mb-3"># 微信支付宝赞助</p>
+                <div class="mt-1">
+                    <img src="../assert/reward.png" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-2">
                 </div>
             </div>
         </div>
