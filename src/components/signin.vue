@@ -9,6 +9,7 @@ export default {
             verifycode: "",
             verifyError: false,
             loginPwError: false,
+            userExistError: false,
             tel: "",
             password: "",
             loginInfoRaw: {},
@@ -28,7 +29,7 @@ export default {
     },
     methods: {
         toverify() {
-            fetch(apiUrl+'verify', {
+            fetch(apiUrl + 'verify', {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
@@ -43,6 +44,27 @@ export default {
                     else {
                         this.verifyError = true;
                         setTimeout(() => { this.verifyError = false; }, 3000)
+                    }
+                })
+        },
+        textExist() {
+            fetch(apiUrl + 'UserIsExist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: Qs.stringify({
+                    tel: this.tel,
+                })
+            })
+                .then(res => res.json())
+                .then((data) => {
+                    if (data == 0) {
+                        this.login();
+                    }
+                    else {
+                        this.userExistError = true;
+                        setTimeout(() => { this.userExistError = false; }, 3000)
                     }
                 })
         },
@@ -99,7 +121,7 @@ export default {
                 });
         },
         commitInfo() {
-            fetch(apiUrl+'UserUpdate', {
+            fetch(apiUrl + 'UserUpdate', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -120,7 +142,7 @@ export default {
             })
                 .then(res => res.json())
                 .then((data) => {
-                    if(data == "1"){
+                    if (data == "1") {
                         this.step = 3;
 
                     }
@@ -199,8 +221,8 @@ export default {
         </h3>
 
 
-        <div class="my-2">
-            <h3 class="text-lg">
+        <div class="mt-8 mb-5 mx-auto w-full max-w-sm flex">
+            <div class="text-lg">
                 <span class="badge badge-secondary mr-2"><svg t="1669196801930" class="icon" viewBox="0 0 1024 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
                         <path
@@ -211,8 +233,8 @@ export default {
                             p-id="6016" fill="#ffffff"></path>
                     </svg>QQ一群</span>
                 <a class="link link-hover" href="https://jq.qq.com/?_wv=1027&k=FLpEj4b8">756016909</a>
-            </h3>
-            <h3 class="text-lg">
+            </div>
+            <div class="text-lg">
                 <span class="badge badge-secondary mr-2"><svg t="1669196801930" class="icon" viewBox="0 0 1024 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
                         <path
@@ -223,7 +245,7 @@ export default {
                             p-id="6016" fill="#ffffff"></path>
                     </svg>QQ一群</span>
                 <a class="link link-hover" href="https://jq.qq.com/?_wv=1027&k=cPvj2Vft">745731575</a>
-            </h3>
+            </div>
             <h3 class="text-lg">
                 <span class="badge badge-secondary mr-2"><svg t="1669196801930" class="icon" viewBox="0 0 1024 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
@@ -239,10 +261,24 @@ export default {
             </h3>
         </div>
 
-        <input type="text" placeholder="邀请码" class="input input-bordered input-primary w-48 max-w-xs mr-2"
+        <!--<input type="text" placeholder="邀请码" class="input input-bordered input-primary w-48 max-w-xs mr-2"
             v-model="verifycode" />
         <button class="btn btn-primary text-white" @click="toverify()">下一步</button>
         <label class="label" v-if="verifyError">
+            <span class="label-text-alt text-red-600">邀请码错误</span>
+        </label>-->
+
+        <div
+            class="mx-auto mt-6 w-full max-w-sm rounded-md border bg-transparent focus-within:border-blue-400 focus-within:ring focus-within:ring-blue-300 focus-within:ring-opacity-40 dark:border-gray-700 dark:focus-within:border-blue-300">
+            <label class="flex flex-col md:flex-row">
+                <input type="email" placeholder="邀请码" v-model="verifycode"
+                    class="m-1 h-10 flex-1 appearance-none border-none bg-transparent px-4 py-2 text-gray-700 placeholder-gray-400 focus:placeholder-transparent focus:outline-none focus:ring-0 dark:text-gray-200" />
+                <button type="button" @click="toverify()"
+                    class="m-1 h-10 transform rounded-md bg-blue-500 px-4 py-2 text-white transition-colors duration-300 hover:bg-blue-400 focus:bg-blue-400 focus:outline-none">下一步</button>
+            </label>
+
+        </div>
+        <label class="label mx-auto my-0  w-full max-w-sm" v-if="verifyError">
             <span class="label-text-alt text-red-600">邀请码错误</span>
         </label>
 
@@ -264,6 +300,9 @@ export default {
                                 <span class="label-text">手机号码</span>
                             </label>
                             <input type="text" placeholder="鑫考云手机号" class="input input-bordered" v-model="tel" />
+                            <label class="label" v-if="userExistError">
+                                <span class="label-text-alt text-red-600">您已注册过体温助手服务了</span>
+                            </label>
                         </div>
                         <div class="form-control">
                             <label class="label">
@@ -279,7 +318,7 @@ export default {
                             </label>
                         </div>
                         <div class="form-control mt-6">
-                            <button class="btn btn-primary" @click="login()">登录以继续</button>
+                            <button class="btn btn-primary" @click="textExist()">登录以继续</button>
                         </div>
                     </div>
                 </div>
@@ -325,6 +364,135 @@ export default {
             <button class="btn btn-primary text-white mt-9" @click="commitInfo()">我确认信息无误</button>
         </center>
 
+    </div>
+
+
+    <div v-if="step == 3">
+
+
+        <div class="container mx-auto sm:px-12 md:px-14 md:pt-0">
+
+            <div class="mt-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-semibold capitalize text-gray-800 dark:text-white lg:text-4xl">
+                        您已成功注册体温助手服务.</h1>
+
+                    <div class="mx-auto mt-6 flex">
+                        <span class="inline-block h-1 w-40 rounded-full bg-blue-500"></span>
+                        <span class="mx-1 inline-block h-1 w-3 rounded-full bg-blue-500"></span>
+                        <span class="inline-block h-1 w-1 rounded-full bg-blue-500"></span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="rounded-lg border border-transparent bg-blue-500 p-8 dark:bg-blue-600 my-8 text-center">
+                <p class="leading-loose text-white">两年来，体温助手项目已经无偿<br>
+                    为千余名小伙伴累计打卡超三万次，<br>
+                    极大的方便了同学们的假期生活。<br>
+                    但为了给同学们提供更稳定的服务，<br>
+                    开发者会有一笔不小的支出，<br>
+                    所以希望有能力的同学可以支持赞助，<br>
+                    一是给我以继续维护此项目的动力，<br>
+                    也是能够用来支付使用更稳定的云服务商的费用。<br>
+                    您的一块两块就能给我带来快乐的一天，<br>
+                    足够让我觉得无数个不眠的代码之夜没有白费。<br>
+
+                </p>
+
+                <div class="-mx-2 mt-8 flex items-center">
+                    <div class="mt-6">
+                        <img src="../assert/reward.png" class="w-14 rounded-md shrink-0 ring-4 ring-blue-200 mx-2">
+                        <span class="text-white text-xs">微信支付宝</span>
+                    </div>
+                    <img class="mx-2 h-14 w-14 shrink-0 rounded-full object-cover ring-4 ring-blue-200"
+                        src="https://hissin.cn/src/200.png" alt="">
+                    <div class="mx-2">
+                        <h1 class="font-semibold text-white">Hissin'</h1>
+                        <span class="text-sm text-blue-200">Co-founder, Geekpara.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-lg border p-8 dark:border-gray-700 leading-2">
+                <p class="text-gray-700 dark:text-gray-400 mt-4">
+                    # <kbd class="kbd">ctrl</kbd>
+                    +
+                    <kbd class="kbd">D</kbd>
+                    收藏体温助手官网(<a href="https://temp.geekpara.com/">https://temp.geekpara.com/</a>)以备后用。<br />
+
+                </p>
+                <p class="text-gray-700 dark:text-gray-400 mt-4">
+                    # 您可以点击“公告/查询”来查看您的助手服务状态，也可以在查询页面更改您的个人信息或取消助手服务。</p>
+
+                <p class="text-gray-700 dark:text-gray-400 mt-4"># 分享此服务至微信/QQ/钉钉班级群，独乐乐不如众乐乐。</p>
+                <p class="text-gray-700 dark:text-gray-400 mt-4 ">#
+                    我们定于每日北京时间06:00提交体温打卡，届时您的鑫考云将会弹窗提示“有其他设备在登录”，是必然现象！您可以随时重新登录，无须考虑会与代体温助手打卡服务冲突！同样，出现弹窗也说明您的打卡成功了。</p>
+                <p class="text-gray-700 dark:text-gray-400 mt-4">#
+                    我们只会保存您的账号以及加密后的密码，不会保存其他任何您的个人信息，我们承诺会在假期结束时删除保存的信息，如果下一假期还需要使用，您可以重新注册。</p>
+                <div class="mt-4">
+
+                    <p class="text-gray-700 dark:text-gray-400 mb-3"># 反馈/交流/通知通道</p>
+
+                    <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=FLpEj4b8">
+                        <span class="badge badge-secondary mr-2">
+                            <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
+                                <path
+                                    d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
+                                    p-id="6015" fill="#ffffff"></path>
+                                <path
+                                    d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
+                                    p-id="6016" fill="#ffffff"></path>
+                            </svg>QQ一群：756016909
+                        </span>
+                    </a>
+
+                    <a class="text-lg pl-3 mt-3" href="https://jq.qq.com/?_wv=1027&k=cPvj2Vft">
+                        <span class="badge badge-secondary mr-2">
+                            <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
+                                <path
+                                    d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
+                                    p-id="6015" fill="#ffffff"></path>
+                                <path
+                                    d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
+                                    p-id="6016" fill="#ffffff"></path>
+                            </svg>QQ一群：745731575
+                        </span>
+                    </a>
+
+                    <a class="text-lg pl-3 mt-3"
+                        href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,mQvtrGj2v7QyElRcjOGFciRHyuduanL5u+OlefppD64=&_dt_no_comment=1&origin=11">
+                        <span class="badge badge-secondary mr-2">
+                            <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
+                                <path
+                                    d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
+                                    p-id="6015" fill="#ffffff"></path>
+                                <path
+                                    d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
+                                    p-id="6016" fill="#ffffff"></path>
+                            </svg>钉钉群：31846657
+                        </span>
+                    </a>
+                </div>
+
+                <div class="mt-4">
+                    <p class="text-gray-700 dark:text-gray-400 mb-3"># 微信扫码关注公众号订阅每日打卡状态</p>
+                    <div class="mt-1">
+                        <img src="../assert/wechat.jpg" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-2">
+                    </div>
+
+                    <div class="-mx-2 mt-8 flex items-center">
+                        <div class="mx-2">
+                            <h1 class="font-semibold text-blue-500 dark:text-white">· 注意事项</h1>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <button class="btn btn-ghost w-full mt-4 text-blue-500" @click="$emit('backHome')">我已阅读，回到主页</button>
+        </div>
     </div>
 
 

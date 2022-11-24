@@ -18,6 +18,6 @@ export default {
 
 <template>
   <div class="my-10 md:px-24 px-6">
-    <component :is="content"></component>
+    <component :is="content" @back-home="content='check'"></component>
   </div>
 </template>
