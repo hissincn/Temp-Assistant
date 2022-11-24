@@ -1,6 +1,6 @@
 <script>
 import Qs from 'qs';
-const apiUrl = "http://101.43.184.61:3002/";
+const apiUrl = "https://tempapi.hissin.cn/";
 
 export default {
     data() {
