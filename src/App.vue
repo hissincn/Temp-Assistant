@@ -6,7 +6,7 @@ import footerContainer from "./components/footerContainer.vue"
 export default {
   data() {
     return {
-      contentis:"check"
+      contentis:"home"
     }
   },
   components: {

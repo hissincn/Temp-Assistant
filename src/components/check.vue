@@ -1,209 +1,236 @@
 <script>
+import Qs from 'qs';
+const apiUrl = "https://tempapi.hissin.cn/";
+
 export default {
     data() {
         return {
-            checkStatus: 0,
+            checkInput: '',
+            userdata: null,
+            multiuser: null,
+            checkError: false,
+            userIndex: null,
 
         }
     },
+    methods: {
+        errorBackNormal() {
+            setTimeout(() => {
+                this.checkError = false;
+            }, 2000)
+        },
+        checking() {
+
+            let inputType = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/.test(this.checkInput);
+
+            if (inputType) {
+                //手机号
+
+                fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.checkInput }) })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response != 0) {
+                            this.userdata = response;
+                        }
+                        else {
+                            this.checkError = true;
+                            this.errorBackNormal();
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+            else {
+                //姓名
+
+                fetch('https://tempapi.hissin.cn/QueryByName', { method: 'POST', body: new URLSearchParams({ name: this.checkInput }) })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.length == 1) {
+                            this.multiuser = null;
+
+                            fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: response[0].tel }) })
+                                .then(response => response.json())
+                                .then(response => {
+                                    this.userdata = response;
+                                })
+                                .catch(err => console.error(err));
+                        }
+                        else if (response.length > 1) {
+                            this.multiuser = response;
+                        }
+                        else if (response == 0) {
+                            this.multiuser = null;
+                            this.checkError = true;
+                            this.errorBackNormal();
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+
+        }
+    },
+    watch: {
+        userIndex() {
+            fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.multiuser[this.userIndex].tel }) })
+                .then(response => response.json())
+                .then(response => {
+                    if (response != 0) {
+                        this.userdata = response;
+                    }
+                    else {
+                        this.checkError = true;
+                        this.errorBackNormal();
+                    }
+                })
+                .catch(err => console.error(err));
+        },
+        checkInput() {
+            this.userdata = null;
+            this.multiuser = null;
+            this.checkError = false;
+            this.userIndex = null;
+        }
+
+    },
+    computed: {
+        userStatus() {
+            if (this.userdata) {
+                if (this.userdata.status == "active") {
+                    return "正常";
+                }
+                else if (this.userdata.status == "suspend") {
+                    return "暂停";
+                }
+                else if (this.userdata.status == "pwerror") {
+                    return "密码错误";
+                }
+            }
+
+
+
+        }
+    }
+
 }
+
+
 </script>
 
 
 <template>
 
-    <!--<div class="rounded-lg border p-8 dark:border-gray-700 leading-2">
-        <p class="text-gray-700 dark:text-gray-400 mt-4">
-            # <kbd class="kbd">ctrl</kbd>
-            +
-            <kbd class="kbd">D</kbd>
-            收藏体温助手官网(<a href="https://temp.geekpara.com/">https://temp.geekpara.com/</a>)以备后用。<br />
 
+
+
+    <div class="max-w-3xl mx-auto">
+
+        <div class="flex items-center">
+            <label for="voice-search" class="sr-only">Search</label>
+            <div class="relative w-full">
+                <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <input type="text" id="voice-search" v-model="checkInput"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="输入手机号或姓名查询打卡状态" required>
+
+            </div>
+            <button @click="checking()"
+                class="inline-flex items-center py-2.5 px-3 ml-2 text-sm font-medium text-white bg-blue-500 rounded-lg border border-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>Search</button>
+        </div>
+
+        <p class="mt-5">通过查询您的打卡状态，您可以随时暂停/开启您的打卡服务，也可以随时修改您的信息。如果您忘记密码，那么这里是<a class="text-blue-500 hover:underline"
+                href="http://home.xinkaoyun.com/login.html" target="_blank">鑫考云官网</a>。
         </p>
 
-        <p class="text-gray-700 dark:text-gray-400 mt-4"># 分享此服务至微信/QQ/钉钉班级群，独乐乐不如众乐乐。</p>
-        <p class="text-gray-700 dark:text-gray-400 mt-4 ">#
-            我们定于每日北京时间06:00提交体温打卡，届时您的鑫考云将会弹窗提示“有其他设备在登录”，是必然现象！您可以随时重新登录，无须考虑会与代体温助手打卡服务冲突！同样，出现弹窗也说明您的打卡成功了。</p>
-        <p class="text-gray-700 dark:text-gray-400 mt-4">#
-            我们只会保存您的账号以及加密后的密码，不会保存其他任何您的个人信息，我们承诺会在假期结束时删除保存的信息，如果下一假期还需要使用，您可以重新注册。</p>
-        <p class="text-gray-700 dark:text-gray-400 mt-4 ">#
-            此项目最初上线于2020年寒假，2020年寒假和2021年暑假由@纾浚,@Youxam维护,2021年寒假由@纾浚 @Sweitea @Czz @hissin维护,升学原因2022年暑假由@hissin'
-            @Czz维护,2022寒假由@hissin’重构并维护，2023年暑假因为hissin升学不知道由谁来维护。</p>
-        <div class="mt-4">
 
-            <p class="text-gray-700 dark:text-gray-400 mb-3"># 反馈/交流/通知通道</p>
-
-            <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=FLpEj4b8">
-                <span class="badge badge-secondary mr-2">
-                    <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                        xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
-                        <path
-                            d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
-                            p-id="6015" fill="#ffffff"></path>
-                        <path
-                            d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
-                            p-id="6016" fill="#ffffff"></path>
-                    </svg>QQ一群：756016909
-                </span>
-            </a>
-
-            <a class="text-lg pl-3 mt-3" href="https://jq.qq.com/?_wv=1027&k=cPvj2Vft">
-                <span class="badge badge-secondary mr-2">
-                    <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                        xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
-                        <path
-                            d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
-                            p-id="6015" fill="#ffffff"></path>
-                        <path
-                            d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
-                            p-id="6016" fill="#ffffff"></path>
-                    </svg>QQ二群：745731575
-                </span>
-            </a>
-
-            <a class="text-lg pl-3 mt-3"
-                href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,mQvtrGj2v7QyElRcjOGFciRHyuduanL5u+OlefppD64=&_dt_no_comment=1&origin=11">
-                <span class="badge badge-secondary mr-2">
-                    <svg t="1669196801930" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                        xmlns="http://www.w3.org/2000/svg" p-id="6014" width="20" height="20">
-                        <path
-                            d="M607.934444 417.856853c-6.179746-6.1777-12.766768-11.746532-19.554358-16.910135l-0.01228 0.011256c-6.986111-6.719028-16.47216-10.857279-26.930349-10.857279-21.464871 0-38.864146 17.400299-38.864146 38.864146 0 9.497305 3.411703 18.196431 9.071609 24.947182l-0.001023 0c0.001023 0.001023 0.00307 0.00307 0.005117 0.004093 2.718925 3.242857 5.953595 6.03853 9.585309 8.251941 3.664459 3.021823 7.261381 5.997598 10.624988 9.361205l3.203972 3.204995c40.279379 40.229237 28.254507 109.539812-12.024871 149.820214L371.157763 796.383956c-40.278355 40.229237-105.761766 40.229237-146.042167 0l-3.229554-3.231601c-40.281425-40.278355-40.281425-105.809861 0-145.991002l75.93546-75.909877c9.742898-7.733125 15.997346-19.668968 15.997346-33.072233 0-23.312962-18.898419-42.211381-42.211381-42.211381-8.797363 0-16.963347 2.693342-23.725354 7.297197-0.021489-0.045025-0.044002-0.088004-0.066515-0.134053l-0.809435 0.757247c-2.989077 2.148943-5.691629 4.669346-8.025791 7.510044l-78.913281 73.841775c-74.178443 74.229608-74.178443 195.632609 0 269.758863l3.203972 3.202948c74.178443 74.127278 195.529255 74.127278 269.707698 0l171.829484-171.880649c74.076112-74.17435 80.357166-191.184297 6.282077-265.311575L607.934444 417.856853z"
-                            p-id="6015" fill="#ffffff"></path>
-                        <path
-                            d="M855.61957 165.804257l-3.203972-3.203972c-74.17742-74.178443-195.528232-74.178443-269.706675 0L410.87944 334.479911c-74.178443 74.178443-78.263481 181.296089-4.085038 255.522628l3.152806 3.104711c3.368724 3.367701 6.865361 6.54302 10.434653 9.588379 2.583848 2.885723 5.618974 5.355985 8.992815 7.309476 0.025583 0.020466 0.052189 0.041956 0.077771 0.062422l0.011256-0.010233c5.377474 3.092431 11.608386 4.870938 18.257829 4.870938 20.263509 0 36.68962-16.428158 36.68962-36.68962 0-5.719258-1.309832-11.132548-3.645017-15.95846l0 0c-4.850471-10.891048-13.930267-17.521049-20.210297-23.802102l-3.15383-3.102664c-40.278355-40.278355-24.982998-98.79612 15.295358-139.074476l171.930791-171.830507c40.179095-40.280402 105.685018-40.280402 145.965419 0l3.206018 3.152806c40.279379 40.281425 40.279379 105.838513 0 146.06775l-75.686796 75.737962c-10.296507 7.628748-16.97358 19.865443-16.97358 33.662681 0 23.12365 18.745946 41.87062 41.87062 41.87062 8.048303 0 15.563464-2.275833 21.944801-6.211469 0.048095 0.081864 0.093121 0.157589 0.141216 0.240477l1.173732-1.083681c3.616364-2.421142 6.828522-5.393847 9.529027-8.792247l79.766718-73.603345C929.798013 361.334535 929.798013 239.981676 855.61957 165.804257z"
-                            p-id="6016" fill="#ffffff"></path>
-                    </svg>钉钉群：31846657
-                </span>
-            </a>
-        </div>
-
-        <div class="mt-4">
-            <p class="text-gray-700 dark:text-gray-400 mb-3"># 微信扫码关注公众号订阅每日打卡状态</p>
-            <div class="mt-1">
-                <img src="../assert/wechat.jpg" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-2">
-            </div>
-
-            <div class="-mx-2 mt-8 flex items-center">
-                <div class="mx-2">
-                    <h1 class="font-semibold text-blue-500 dark:text-white">· 公告</h1>
+        <div class="flex flex-col mt-4">
+            <div v-if="multiuser" class="my-5">
+                <div class="text-blue-500 font-bold mb-3">撞名啦，您的手机号是哪一个？</div>
+                <div v-for="(person, index) in multiuser" :key="index">
+                    <input type="radio" name="radio-2" class="radio radio-primary" v-model='userIndex'
+                        :value="index" />{{
+                                person.tel
+                        }}
                 </div>
             </div>
-
         </div>
-    </div>-->
 
 
 
+        <div class="my-6" v-if="userdata">
 
-    <div tabindex="0" class="collapse group mt-6 mb-10">
-        <div
-            class="font-semibold text-blue-500 mb-2 collapse-title bg-white  group-focus:bg-secondary group-focus:text-secondary-content group-focus:rounded-t-lg rounded-lg border dark:border-gray-700">
-            通知/公告 «点击查看
-        </div>
-        <div
-            class="collapse-content bg-white text-primary-content group-focus:bg-white group-focus:text-secondary-content group-focus:rounded-lg group-focus:border dark:border-gray-700">
-            <p class="text-blue-500 font-bold mt-4">
-                # <kbd class="kbd">ctrl</kbd>
-                +
-                <kbd class="kbd">D</kbd>
-                收藏体温助手官网(<a href="https://temp.geekpara.com/">https://temp.geekpara.com/</a>)以备后用。<br />
+            <div class="rounded-md shrink-0 ring-4 ring-blue-200 px-8 py-5 mb-5">
+                <strong
+                    class="px-4 py-1  text-base rounded-2xl font-medium tracking-wide " :class="userdata.status=='active' ? 'text-green-600  bg-green-200': 'text-red-600  bg-red-200'">
+                    {{ userStatus }}
+                </strong>
 
-            </p>
+                <div class="mt-8 flex justify-between">
+                    <div class="max-w-[35ch]">
+                        <h1 class="text-2xl font-bold">
+                            {{ userdata.name }}
+                        </h1>
 
-            <p class="text-blue-500 font-bold mt-4"># 分享此服务至微信/QQ/钉钉班级群，独乐乐不如众乐乐。</p>
-            <p class="text-blue-500 font-bold mt-4 ">#
-                我们定于每日北京时间06:00提交体温打卡，届时您的鑫考云将会弹窗提示“有其他设备在登录”，是必然现象！您可以随时重新登录，无须考虑会与代体温助手打卡服务冲突！同样，出现弹窗也说明您的打卡成功了。</p>
-            <p class="text-blue-500 font-bold mt-4">#
-                我们只会保存您的账号以及加密后的密码，不会保存其他任何您的个人信息，我们承诺会在假期结束时删除保存的信息，如果下一假期还需要使用，您可以重新注册。</p>
+                        <p class="mt-0.5 text-sm">{{ userdata.tel }}</p>
 
+                    </div>
 
-
-            <div class="mt-4">
-                <p class="text-blue-500 font-bold mb-3"># 交流/通知/赞助</p>
-
-                <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=FLpEj4b8">
-                    <span class="badge badge-secondary badge-outline mr-2">
-                        <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
-                            <path
-                                d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
-                                p-id="4128" fill="#377CFB"></path>
-                        </svg>QQ一群：756016909
-                    </span>
-                </a>
-
-                <a class="text-lg pl-3 mt-3" href="https://jq.qq.com/?_wv=1027&k=cPvj2Vft">
-                    <span class="badge badge-secondary badge-outline mr-2 ">
-                        <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
-                            <path
-                                d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
-                                p-id="4128" fill="#377CFB"></path>
-                        </svg>QQ二群：745731575
-                    </span>
-                </a>
-
-                <a class="text-lg pl-3 mt-3"
-                    href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,mQvtrGj2v7QyElRcjOGFciRHyuduanL5u+OlefppD64=&_dt_no_comment=1&origin=11">
-                    <span class="badge badge-secondary badge-outline mr-2">
-                        <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
-                            <path
-                                d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
-                                p-id="4128" fill="#377CFB"></path>
-                        </svg>钉钉群：31846657
-                    </span>
-                </a>
-            </div>
-
-            <div class="mt-4 flex">
-                <div class="mx-2 px-auto">
-                    <img src="../assert/wechat.jpg" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-auto">
-                    <p class="text-blue-500 font-semibold dark:text-gray-400 mt-1">微信订阅推送</p>
-
+                    <p class="text-lg font-bold">{{ userdata.tempHistory[0].status }}</p>
                 </div>
 
-                <div class="mx-2">
-                    <img src="../assert/reward.png" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-auto">
-                    <p class="text-blue-500 font-semibold dark:text-gray-400 mt-1">微信支付宝赞助</p>
 
+                <div class="my-4 prose max-w-none group-open:hidden">
+                    <button class="btn btn-primary mr-2">信息更新</button>
+                    <button class="btn btn-secondary mr-2">打开服务</button>
+                    <button class="btn btn-accent mr-2 text-white font-bold">暂停服务</button>
                 </div>
-            </div>
 
-            <p class="text-blue-500 font-bold mt-4"># 原理</p>
-            <div class="mt-2 ml-4 text-gray-700">
-                通过抓取并分析鑫考云数据包，开发了这个平台。
-                模拟数据包提交来实现自动打卡的功能。
-                通过获取您的历史记录来填充提交数据的字段，所以您必须先自行打一次卡，才能实现自动打卡。
-                下面是api调用列表：
-                https://twsb.xinkaoyun.com:8099/temp/report/studentSaveTemp (提交体温数据)
-                https://twsb.xinkaoyun.com:8099/temp/report/getStudentTempInfoHistory (获取历史记录)
-                https://usr.xinkaoyun.com/api/HSCPC/Login (PC版登录，获取token和必要信息)
-                https://usr.xinkaoyun.com/api/HSCApp/NewLogin_jiami (移动端登录，获取手机版token和必要信息)
 
             </div>
 
-            <p class="text-blue-500 font-bold mt-4"># 项目历程</p>
-            <div class="mt-2 ml-4 text-gray-700">
-                此项目最初上线于2020年寒假，2020年寒假和2021年暑假由@纾浚,@Youxam维护,2021年寒假由@纾浚 @Sweitea @Czz @hissin维护,升学原因2022年暑假由@hissin'
-                @Czz维护,2022寒假由@hissin’重构并维护，2023年暑假因为hissin升学不知道由谁来维护。
+
+
+
+
+
+
+
+            <div class="rounded-md shrink-0 ring-4 ring-blue-200">
+                <table class="table w-full">
+                    <thead class="">
+                        <tr>
+                            <th class="font-bold text-white text-lg bg-blue-500 ">日期</th>
+                            <th class="font-bold text-white text-lg bg-blue-500">体温/状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-blue-100" v-for="(day, index) in userdata.tempHistory" :key="index">
+                            <th class="font-bold text-blue-500 text-base bg-white hover:bg-blue-100">{{ day.createdAt }}
+                            </th>
+                            <td class="font-bold text-blue-400 text-base bg-white hover:bg-blue-100">{{ day.status }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
     </div>
 
 
-    <div class="flex flex-col items-center xl:mx-8 xl:items-start">
-        <h1 class="text-3xl font-medium capitalize text-gray-800 dark:text-white lg:text-4xl">查 询</h1>
-        <input type="text" placeholder="手机号/姓名" class="input input-bordered input-primary w-full max-w-xs mt-10 mb-5" />
 
-        <div class="mt-4">
-            <span class="inline-block h-1 w-40 rounded-full bg-blue-500"></span>
-            <span class="mx-1 inline-block h-1 w-3 rounded-full bg-blue-500"></span>
-            <span class="inline-block h-1 w-1 rounded-full bg-blue-500"></span>
-        </div>
 
-    </div>
 
 
 
