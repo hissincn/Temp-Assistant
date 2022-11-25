@@ -190,7 +190,7 @@ export default {
                 </div>
 
 
-                <div class="my-4 prose max-w-none group-open:hidden">
+                <div class="mt-4 mb-0 prose max-w-none group-open:hidden">
                     <button class="btn btn-primary mr-2">信息更新</button>
                     <button class="btn btn-secondary mr-2">打开服务</button>
                     <button class="btn btn-accent mr-2 text-white font-bold">暂停服务</button>
