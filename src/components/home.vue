@@ -5,11 +5,33 @@ import check from "./check.vue"
 export default {
     data() {
         return {
+            userNum: null,
+            recordNum: null
         }
+    },
+    mounted() {
+        fetch('https://tempapi.hissin.cn/info', { method: 'POST', body: new URLSearchParams({}) })
+            .then(response => response.json())
+            .then(response => {
+                this.userNum = response.userNum,
+                    this.recordNum = response.recordNum
+            })
+            .catch(err => console.error(err));
     },
     components: {
         check: check
     },
+    computed: {
+        rundays() {
+
+            let s1 = '2022-11-20';
+            s1 = new Date(s1.replace(/-/g, "/"));
+            let s2 = new Date();
+            let days = s2.getTime() - s1.getTime();
+
+            return parseInt(days / (1000 * 60 * 60 * 24));
+        }
+    }
 }
 </script>
 
@@ -114,6 +136,51 @@ export default {
     </div>
 
     <check></check>
+
+    <section class="bg-white">
+        <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+            <div class="mx-auto max-w-3xl text-center">
+                <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                    Make Everything Dynamic
+                </h2>
+
+                <p class="mt-4 text-gray-500 sm:text-xl">
+                    三年技术积淀，为您免费提供稳定的服务——极客学园联合创始人hissin'献上
+                </p>
+            </div>
+
+            <div class="mt-8 sm:mt-12">
+                <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                        <dt class="order-last text-lg font-medium text-gray-500">
+                            用户数
+                        </dt>
+
+                        <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">
+                            {{ userNum }}人
+                        </dd>
+                    </div>
+
+                    <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                        <dt class="order-last text-lg font-medium text-gray-500">
+                            本假期累计打卡
+                        </dt>
+
+                        <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ recordNum }}次</dd>
+                    </div>
+
+                    <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                        <dt class="order-last text-lg font-medium text-gray-500">
+                            累计运营
+                        </dt>
+
+                        <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ rundays }}天</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </section>
+
 
 
 </template>
