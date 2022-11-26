@@ -10,7 +10,10 @@ export default {
             multiuser: null,
             checkError: false,
             userIndex: null,
-
+            infoUpdateVerify: false,
+            infoUpdateMethod: null,
+            password: null,
+            pwError: false,
         }
     },
     methods: {
@@ -67,7 +70,89 @@ export default {
                     .catch(err => console.error(err));
             }
 
+        },
+        openService() {
+            this.infoUpdateVerify = true;
+            this.infoUpdateMethod = "open";
+
+
+        },
+        suspendService() {
+            this.infoUpdateVerify = true;
+            this.infoUpdateMethod = "suspend";
+
+        },
+        updateService() {
+            this.infoUpdateVerify = true;
+            this.infoUpdateMethod = "update";
+
+        },
+        goVerify() {
+            fetch('https://usr.xinkaoyun.com/api/HSCPC/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: Qs.stringify({
+                    userName: this.userdata.tel,
+                    password: this.password,
+                })
+            })
+                .then(res => res.json())
+                .then((data) => {
+                    if (data.resultCode == "0") {
+                        //成功登录
+
+                        if (this.infoUpdateMethod == 'open') {
+
+                            fetch('https://tempapi.hissin.cn/ServiceOpen', {
+                                method: 'POST',
+                                body: new URLSearchParams({ tel: this.userdata.tel, password: this.password })
+                            })
+                                .then(response => response.json())
+                                .then(response => {
+                                    console.log("open");
+                                    this.infoUpdateVerify = false;
+                                    this.infoUpdateMethod = null;
+                                    this.password = null;
+                                    this.checking()
+
+                                })
+                                .catch(err => console.error(err));
+                        }
+                        else if (this.infoUpdateMethod == 'suspend') {
+
+                            fetch('https://tempapi.hissin.cn/ServiceSuspend', {
+                                method: 'POST',
+                                body: new URLSearchParams({ tel: this.userdata.tel, password: this.password })
+                            })
+                                .then(response => response.json())
+                                .then(response => {
+                                    console.log("suspend");
+                                    this.infoUpdateVerify = false;
+                                    this.infoUpdateMethod = null;
+                                    this.password = null;
+                                    this.checking()
+
+                                })
+                                .catch(err => console.error(err));
+
+                        }
+
+
+
+                    }
+                    else {
+                        //登录错误
+                        this.pwError = true;
+                        setTimeout(() => { this.pwError = false; }, 2000);
+                    }
+                });
+
+
         }
+
+
     },
     watch: {
         userIndex() {
@@ -105,9 +190,6 @@ export default {
                     return "密码错误";
                 }
             }
-
-
-
         }
     }
 
@@ -171,8 +253,8 @@ export default {
         <div class="my-6" v-if="userdata">
 
             <div class="rounded-md shrink-0 ring-4 ring-blue-200 px-8 py-5 mb-5">
-                <strong
-                    class="px-4 py-1  text-base rounded-2xl font-medium tracking-wide " :class="userdata.status=='active' ? 'text-green-600  bg-green-200': 'text-red-600  bg-red-200'">
+                <strong class="px-4 py-1  text-base rounded-2xl font-medium tracking-wide "
+                    :class="userdata.status == 'active' ? 'text-green-600  bg-green-200' : 'text-red-600  bg-red-200'">
                     {{ userStatus }}
                 </strong>
 
@@ -191,9 +273,19 @@ export default {
 
 
                 <div class="mt-4 mb-0 prose max-w-none group-open:hidden">
-                    <button class="btn btn-primary mr-2">信息更新</button>
-                    <button class="btn btn-secondary mr-2">打开服务</button>
-                    <button class="btn btn-accent mr-2 text-white font-bold">暂停服务</button>
+                    <button class="text-green-500 font-bold hover:text-green-700 mr-2"
+                        v-if="userdata.status != 'active'" @click="openService()">打开服务</button>
+                    <button class="text-red-500 font-bold hover:text-red-700 mr-2" v-if="userdata.status != 'suspend'"
+                        @click="suspendService()">停止服务</button>
+                    <button class="text-blue-500 font-bold hover:text-blue-700 mr-2"
+                        @click="updateService()">信息更新</button>
+                    <div class="form-control" v-if="infoUpdateVerify">
+                        <div class="input-group mt-4">
+                            <input type="text" placeholder="请输入密码" class="input input-bordered" v-model="password" />
+                            <button class="btn btn-primary" @click="goVerify()">确定</button>
+                        </div>
+                        <div class="text-red-500" v-if="pwError">密码错误</div>
+                    </div>
                 </div>
 
 
