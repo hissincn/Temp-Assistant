@@ -297,7 +297,7 @@ export default {
                             {{ userdata.name }}
                         </h1>
 
-                        <p class="mt-0.5 text-sm">{{ userdata.tel }}</p>
+                        <p class="mt-0.5 text-sm">{{ userdata.tel.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") }}</p>
 
                     </div>
 
