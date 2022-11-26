@@ -304,7 +304,7 @@ export default {
 
                     </div>
 
-                    <p class="text-lg font-bold">{{ userdata.tempHistory[0].status }}</p>
+                    <p class="text-lg font-bold">{{ userdata.tempHistory.length>0?userdata.tempHistory[0].status:"暂无记录" }}</p>
                 </div>
 
 
@@ -363,9 +363,9 @@ export default {
 
 
 
-            <div class="rounded-md shrink-0 ring-4 ring-blue-200">
+            <div class="rounded-md shrink-0 ring-4 ring-blue-200" v-if="userdata.tempHistory.length>0">
                 <table class="table w-full">
-                    <thead class="">
+                    <thead>
                         <tr>
                             <th class="font-bold text-white text-lg bg-blue-500 ">日期</th>
                             <th class="font-bold text-white text-lg bg-blue-500">体温/状态</th>
