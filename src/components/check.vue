@@ -18,6 +18,7 @@ export default {
             dormitory: null,
             livePlace: null,
             verifiedForUpdate: false,
+            
 
         }
     },
@@ -29,7 +30,7 @@ export default {
         },
         checking() {
 
-            let inputType = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/.test(this.checkInput);
+            let inputType = /^0?1[1|2|3|4|5|6|7|8|9][0-9]\d{8}$/.test(this.checkInput);
 
             if (inputType) {
                 //手机号
@@ -263,6 +264,8 @@ export default {
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>Search</button>
         </div>
+        <div class="text-red-500 ml-10" v-if="checkError">用户不存在</div>
+
 
         <p class="mt-5">通过查询您的打卡状态，您可以随时暂停/开启您的打卡服务，也可以随时修改您的信息。如果您忘记密码，那么这里是<a class="text-blue-500 hover:underline"
                 href="http://home.xinkaoyun.com/login.html" target="_blank">鑫考云官网</a>。
