@@ -14,6 +14,11 @@ export default {
             infoUpdateMethod: null,
             password: null,
             pwError: false,
+            teacherName: null,
+            dormitory: null,
+            livePlace: null,
+            verifiedForUpdate: false,
+
         }
     },
     methods: {
@@ -138,6 +143,10 @@ export default {
                                 .catch(err => console.error(err));
 
                         }
+                        else if (this.infoUpdateMethod == 'update') {
+                            this.verifiedForUpdate = true;
+
+                        }
 
 
 
@@ -150,6 +159,30 @@ export default {
                 });
 
 
+        },
+        updateInfo() {
+            fetch('https://tempapi.hissin.cn/InfoUpdate', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    tel: this.userdata.tel,
+                    password: this.password,
+                    teacherName: this.teacherName,
+                    livePlace: this.livePlace,
+                    dormitory: this.dormitory,
+                })
+            })
+                .then(response => response.json())
+                .then(response => {
+                    console.log("open");
+                    this.infoUpdateVerify = false;
+                    this.infoUpdateMethod = null;
+                    this.password = null;
+                    this.verifiedForUpdate = false;
+
+                    this.checking()
+
+                })
+                .catch(err => console.error(err));
         }
 
 
@@ -286,6 +319,35 @@ export default {
                         </div>
                         <div class="text-red-500" v-if="pwError">密码错误</div>
                     </div>
+
+
+                    <div v-if="verifiedForUpdate == true">
+                        <div class="form-control w-full max-w-xs mt-3">
+                            <label class="label">
+                                <span class="label-text">班主任姓名</span>
+                            </label>
+                            <input type="text" placeholder="班主任姓名" class="input input-bordered w-full max-w-xs"
+                                v-model="teacherName" />
+
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">宿舍号</span>
+                            </label>
+                            <input type="text" placeholder="宿舍号" class="input input-bordered w-full max-w-xs"
+                                v-model="dormitory" />
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">居住地</span>
+                            </label>
+                            <input type="text" placeholder="居住地" class="input input-bordered w-full max-w-xs"
+                                v-model="livePlace" />
+                        </div>
+                        <button class="btn btn-primary text-white mt-9" @click="updateInfo()">我确认信息无误</button>
+                    </div>
+
+
                 </div>
 
 

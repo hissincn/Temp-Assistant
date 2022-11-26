@@ -349,7 +349,7 @@ export default {
         <div class="hero">
             <div class="hero-content flex-col">
                 <div class="text-center">
-                    <h1 class="text-5xl font-bold">使用鑫考云账户登录</h1>
+                    <h1 class="text-3xl font-bold">使用鑫考云账户登录</h1>
                     <p class="py-6">用来获取必要的信息，用于填充“体温上报”表单。</p>
                 </div>
                 <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
