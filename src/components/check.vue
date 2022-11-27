@@ -358,11 +358,6 @@ export default {
 
 
 
-
-
-
-
-
             <div class="rounded-md shrink-0 ring-4 ring-blue-200" v-if="userdata.tempHistory.length>0">
                 <table class="table w-full">
                     <thead>
