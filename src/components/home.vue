@@ -115,10 +115,8 @@ export default {
 
             <p class="text-blue-500 font-bold mt-4"># 原理</p>
             <div class="mt-2 ml-4 text-gray-700">
-                通过抓取并分析鑫考云数据包，开发了这个平台。
-                模拟数据包提交来实现自动打卡的功能。
-                通过获取您的历史记录来填充提交数据的字段，所以您必须先自行打一次卡，才能实现自动打卡。
-                下面是api调用列表：
+                抓取并分析鑫考云数据包，并通过vue+vite实现了前端，部署在vercel上面，使用node.js 实现了后端api和打卡脚本，使用mysql作为数据存储平台。
+                我们会调用以下鑫考云官方API：
                 https://twsb.xinkaoyun.com:8099/temp/report/studentSaveTemp (提交体温数据)
                 https://twsb.xinkaoyun.com:8099/temp/report/getStudentTempInfoHistory (获取历史记录)
                 https://usr.xinkaoyun.com/api/HSCPC/Login (PC版登录，获取token和必要信息)
