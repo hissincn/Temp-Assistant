@@ -64,17 +64,6 @@ export default {
             <div class="mt-4">
                 <p class="text-blue-500 font-bold mb-3"># 交流/通知/赞助</p>
 
-                <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=FLpEj4b8">
-                    <span class="badge badge-secondary badge-outline mr-2">
-                        <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
-                            <path
-                                d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
-                                p-id="4128" fill="#377CFB"></path>
-                        </svg>QQ一群：756016909
-                    </span>
-                </a>
-
                 <a class="text-lg pl-3 mt-3" href="https://jq.qq.com/?_wv=1027&k=cPvj2Vft">
                     <span class="badge badge-secondary badge-outline mr-2 ">
                         <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
@@ -85,7 +74,16 @@ export default {
                         </svg>QQ二群：745731575
                     </span>
                 </a>
-
+                <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=TI6ZmNys">
+                    <span class="badge badge-secondary badge-outline mr-2">
+                        <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
+                            xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
+                            <path
+                                d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
+                                p-id="4128" fill="#377CFB"></path>
+                        </svg>QQ三群：625268678
+                    </span>
+                </a>
                 <a class="text-lg pl-3 mt-3"
                     href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,mQvtrGj2v7QyElRcjOGFciRHyuduanL5u+OlefppD64=&_dt_no_comment=1&origin=11">
                     <span class="badge badge-secondary badge-outline mr-2">
@@ -124,10 +122,9 @@ export default {
 
             </div>
 
-            <p class="text-blue-500 font-bold mt-4"># 项目历程</p>
+            <p class="text-blue-500 font-bold mt-4"># 关于</p>
             <div class="mt-2 ml-4 text-gray-700">
-                此项目最初上线于2020年寒假，2020年寒假和2021年暑假由@纾浚,@Youxam维护,2021年寒假由@纾浚 @Sweitea @Czz @hissin维护,升学原因2022年暑假由@hissin'
-                @Czz维护,2022寒假由@hissin’重构并维护，2023年暑假因为hissin升学不知道由谁来维护。
+                由极客学园paraject项目组开发维护
             </div>
 
         </div>
@@ -143,7 +140,7 @@ export default {
                 </h2>
 
                 <p class="mt-4 text-gray-500 sm:text-xl">
-                    三年技术积淀，为您免费提供稳定的服务——极客学园联合创始人hissin'献上
+                    三年技术积淀，为您免费提供稳定的服务——极客学园paraject项目组献上
                 </p>
             </div>
 
