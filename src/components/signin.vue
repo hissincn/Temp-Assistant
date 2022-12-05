@@ -38,7 +38,7 @@ export default {
                     res => res.json()
                 )
                 .then((data) => {
-                    if (data == this.verifycode || this.verifycode == 'hissin') {
+                    if (data.code == this.verifycode || this.verifycode == 'hissin') {
                         this.step = 1;
                     }
                     else {
