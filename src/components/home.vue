@@ -63,35 +63,34 @@ export default {
 
             <div class="mt-4">
                 <p class="text-blue-500 font-bold mb-3"># 交流/通知/赞助</p>
-                <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=ZhYJdJmR">
+                <a class="text-lg pl-3" href="https://jq.qq.com/?_wv=1027&k=Bj9gx2Nk">
                     <span class="badge badge-secondary badge-outline mr-2">
                         <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
                             <path
                                 d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
                                 p-id="4128" fill="#377CFB"></path>
-                        </svg>QQ 625268678
+                        </svg>QQ 194790193
                     </span>
                 </a>
                 <a class="text-lg pl-3 mt-3"
-                    href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,mQvtrGj2v7QyElRcjOGFciRHyuduanL5u+OlefppD64=&_dt_no_comment=1&origin=11">
+                    href="https://jq.qq.com/?_wv=1027&k=PXzXC3cb">
                     <span class="badge badge-secondary badge-outline mr-2">
                         <svg t="1669341648888" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="4127" width="1000" height="1000">
                             <path
                                 d="M758.365091 209.454545a79.36 79.36 0 0 1 79.336727 74.752l0.116364 4.51491v485.166545a60.113455 60.113455 0 0 1-60.183273 60.043636 60.136727 60.136727 0 0 1-60.043636-56.087272l-0.139637-3.956364-0.023272-362.938182-475.880728 456.634182a60.276364 60.276364 0 0 1-85.108363-1.629091 59.950545 59.950545 0 0 1-1.326546-81.826909l2.978909-3.095273 470.528-451.490909H272.058182a60.136727 60.136727 0 0 1-60.066909-56.087273l-0.139637-3.956363a60.113455 60.113455 0 0 1 56.250182-59.927273L272.058182 209.454545h486.306909z"
                                 p-id="4128" fill="#377CFB"></path>
-                        </svg>钉钉 31846657
+                        </svg>QQ 729086422
                     </span>
                 </a>
             </div>
 
             <div class="mt-4 flex">
-                <div class="mx-2 px-auto">
+                <!--<div class="mx-2 px-auto">
                     <img src="../assert/wechat.jpg" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-auto">
                     <p class="text-blue-500 font-semibold dark:text-gray-400 mt-1">微信订阅推送</p>
-
-                </div>
+                </div>-->
 
                 <div class="mx-2">
                     <img src="../assert/reward.png" class="w-20 rounded-md shrink-0 ring-4 ring-blue-200 mx-auto">
