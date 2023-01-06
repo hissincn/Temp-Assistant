@@ -368,10 +368,11 @@ export default {
                     </thead>
                     <tbody>
                         <tr class="hover:bg-blue-100" v-for="(day, index) in userdata.tempHistory" :key="index">
-                            <th class="font-bold text-blue-500 text-base bg-white hover:bg-blue-100">{{ day.createdAt }}
+                            <th class="font-bold text-blue-500 text-base bg-white hover:bg-blue-100">{{new Date(day.createdAt).toISOString().slice(0,10)}}
                             </th>
                             <td class="font-bold text-blue-400 text-base bg-white hover:bg-blue-100">{{ day.status }}
                             </td>
+                            
                         </tr>
                     </tbody>
                 </table>
