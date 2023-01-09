@@ -1,6 +1,5 @@
 <script>
 import Qs from 'qs';
-const apiUrl = "https://tempapi.hissin.cn/";
 
 export default {
     data() {
@@ -18,8 +17,6 @@ export default {
             dormitory: null,
             livePlace: null,
             verifiedForUpdate: false,
-            
-
         }
     },
     methods: {
@@ -35,7 +32,7 @@ export default {
             if (inputType) {
                 //手机号
 
-                fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.checkInput }) })
+                fetch(this.apiUrl +'QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.checkInput }) })
                     .then(response => response.json())
                     .then(response => {
                         if (response != 0) {
@@ -51,13 +48,13 @@ export default {
             else {
                 //姓名
 
-                fetch('https://tempapi.hissin.cn/QueryByName', { method: 'POST', body: new URLSearchParams({ name: this.checkInput }) })
+                fetch(this.apiUrl +'QueryByName', { method: 'POST', body: new URLSearchParams({ name: this.checkInput }) })
                     .then(response => response.json())
                     .then(response => {
                         if (response.length == 1) {
                             this.multiuser = null;
 
-                            fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: response[0].tel }) })
+                            fetch(this.apiUrl +'QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: response[0].tel }) })
                                 .then(response => response.json())
                                 .then(response => {
                                     this.userdata = response;
@@ -111,7 +108,7 @@ export default {
 
                         if (this.infoUpdateMethod == 'open') {
 
-                            fetch('https://tempapi.hissin.cn/ServiceOpen', {
+                            fetch(this.apiUrl +'ServiceOpen', {
                                 method: 'POST',
                                 body: new URLSearchParams({ tel: this.userdata.tel, password: this.password })
                             })
@@ -128,7 +125,7 @@ export default {
                         }
                         else if (this.infoUpdateMethod == 'suspend') {
 
-                            fetch('https://tempapi.hissin.cn/ServiceSuspend', {
+                            fetch(this.apiUrl +'ServiceSuspend', {
                                 method: 'POST',
                                 body: new URLSearchParams({ tel: this.userdata.tel, password: this.password })
                             })
@@ -162,7 +159,7 @@ export default {
 
         },
         updateInfo() {
-            fetch('https://tempapi.hissin.cn/InfoUpdate', {
+            fetch(this.apiUrl +'InfoUpdate', {
                 method: 'POST',
                 body: new URLSearchParams({
                     tel: this.userdata.tel,
@@ -190,7 +187,7 @@ export default {
     },
     watch: {
         userIndex() {
-            fetch('https://tempapi.hissin.cn/QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.multiuser[this.userIndex].tel }) })
+            fetch(this.apiUrl +'QueryByTel', { method: 'POST', body: new URLSearchParams({ tel: this.multiuser[this.userIndex].tel }) })
                 .then(response => response.json())
                 .then(response => {
                     if (response != 0) {

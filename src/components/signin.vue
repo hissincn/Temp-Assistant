@@ -1,6 +1,5 @@
 <script>
 import Qs from 'qs';
-const apiUrl = "https://tempapi.hissin.cn/";
 
 export default {
     data() {
@@ -19,7 +18,6 @@ export default {
             dormitory: "",
             stuIndex: 0,
 
-
         }
     },
     computed: {
@@ -29,7 +27,7 @@ export default {
     },
     methods: {
         toverify() {
-            fetch(apiUrl + 'verify', {
+            fetch(this.apiUrl + 'verify', {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
@@ -48,7 +46,7 @@ export default {
                 })
         },
         textExist() {
-            fetch(apiUrl + 'UserIsExist', {
+            fetch(this.apiUrl + 'UserIsExist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -121,7 +119,7 @@ export default {
                 });
         },
         commitInfo() {
-            fetch(apiUrl + 'UserUpdate', {
+            fetch(this.apiUrl + 'UserUpdate', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

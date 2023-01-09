@@ -1,7 +1,6 @@
 <script>
 import check from "./check.vue"
 
-
 export default {
     data() {
         return {
@@ -10,7 +9,7 @@ export default {
         }
     },
     mounted() {
-        fetch('https://tempapi.hissin.cn/info', { method: 'POST', body: new URLSearchParams({}) })
+        fetch(this.apiUrl +'info', { method: 'POST', body: new URLSearchParams({}) })
             .then(response => response.json())
             .then(response => {
                 this.userNum = response.userNum,
@@ -111,14 +110,14 @@ export default {
     <check></check>
 
     <section class="bg-white">
-        <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+        <div class="mx-auto max-w-screen-xl px-4 pt-12 sm:px-6 md:py-16 lg:px-8">
             <div class="mx-auto max-w-3xl text-center">
                 <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
-                    Make Everything Dynamic
+                    为了无法计算的价值
                 </h2>
 
                 <p class="mt-4 text-gray-500 sm:text-xl">
-                    三年技术积淀，为您免费提供稳定的服务——极客学园paraject项目组献上
+                    体温助手已全量上云,腾讯云云原生Postgre托管数据库，阿里云函数计算托管打卡、通知脚本，WebAPI
                 </p>
             </div>
 
